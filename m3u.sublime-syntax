@@ -1,0 +1,53 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/syntax.html
+name: M3U
+file_extensions:
+  - m3u
+scope: text.m3u
+contexts:
+  main:
+    - match: '^[ \t].*'
+      scope: invalid.illegal.m3u
+    - match: ^#EXTM3U
+      scope: support.class.m3u
+      push:
+        - match: $
+          pop: true
+        - match: ' [a-zA-Z-][^=]+'
+          scope: meta.attribute-with-value.m3u entity.other.attribute-name.m3u
+        - match: '"[^"]+"'
+          scope: meta.string.m3u string.quoted.double.m3u
+    - match: ^#EXTINF
+      scope: support.constant.m3u
+      push:
+        - match: (,)(.*)|$
+          captures:
+            1: keyword.control.m3u
+            2: meta.string.m3u
+          pop: true
+        - match: ':'
+          scope: keyword.control.m3u
+        - match: '-\d+'
+          scope: constant.numeric.m3u
+        - match: ' [a-zA-Z-][^=]+'
+          scope: meta.attribute-with-value.m3u entity.other.attribute-name.m3u
+        - match: '("[^"]+"|"")'
+          scope: meta.string.m3u string.quoted.double.m3u
+    - match: ^#EXT[-\w]*
+      scope: support.constant.m3u
+      push:
+        - match: $
+          pop: true
+        - match: ':'
+          scope: keyword.control.m3u
+        - match: '[a-zA-Z-]+='
+          scope: meta.attribute-with-value.m3u entity.other.attribute-name.m3u
+        - match: '(.*)$'
+          scope: meta.string.m3u string.unquoted.m3u
+    - match: '(<|=|>)(.*)'
+      scope: comment.m3u
+    - match: '# (.*)'
+      scope: comment.m3u
+    - match: '.*$'
+      scope: meta.path.url.m3u meta.string.m3u
